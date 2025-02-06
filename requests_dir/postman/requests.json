@@ -1,0 +1,28 @@
+{
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://postman-echo.com/get",
+      "headers": {
+        "Authorization": "Bearer your-token",
+        "Accept": "application/json"
+      },
+      "query_params": {
+        "userId": "{{TEST1}}",
+        "groupId": "{{TEST2}}"
+      },
+      "body": null
+    },
+    {
+      "method": "POST",
+      "url": "https://postman-echo.com/post",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer your-token"
+      },
+      "query_params": null,
+      "body": "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
+    }
+  ]
+}
+

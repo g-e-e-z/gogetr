@@ -1,0 +1,27 @@
+{
+  "requests": [
+    {
+      "method": "GET",
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "headers": {
+        "Authorization": "Bearer your-token",
+        "Accept": "application/json"
+      },
+      "query_params": {
+        "userId": "1"
+      },
+      "body": null
+    },
+    {
+      "method": "POST",
+      "url": "https://jsonplaceholder.typicode.com/posts",
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer your-token"
+      },
+      "query_params": null,
+      "body": "{\"title\": \"foo\", \"body\": \"bar\", \"userId\": 1}"
+    }
+  ]
+}
+
