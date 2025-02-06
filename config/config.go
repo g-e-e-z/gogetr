@@ -37,7 +37,7 @@ func findOrCreateConfigDir(folder string) (string, error) {
 	return folder, nil
 }
 
-func NewAppConfig(configDir string) (*AppConfig, error) {
+func NewAppConfig() (*AppConfig, error) {
 	configDir, err := findOrCreateConfigDir(configDir)
 	if err != nil {
 		return nil, err
