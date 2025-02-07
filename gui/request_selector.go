@@ -8,68 +8,80 @@ import (
 	"path/filepath"
 
 	"github.com/g-e-e-z/gogetr/requests"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 func NewRequestSelector() *tview.Flex {
-	// list := tview.NewList().
-	// 	AddItem("List item 1", "Some explanatory text", 'a', nil).
-	// 	AddItem("List item 2", "Some explanatory text", 'b', nil).
-	// 	AddItem("List item 3", "Some explanatory text", 'c', nil).
-	// 	AddItem("List item 4", "Some explanatory text", 'd', nil)
-		// AddItem("Quit", "Press to exit", 'q', func() {
-		// 	app.Stop()
-		// })
-	// groups := map[string][]string{
-	// 	"Group 1": {"Request 1", "Request 2", "Request 3"},
-	// 	"Group 2": {"Request 4", "Request 5"},
-	// 	"Group 3": {"Request 6", "Request 7", "Request 8", "Request 9"},
-	// }
-
-    pwd, _ := os.Getwd()
+	// TODO: This is bad
+	pwd, _ := os.Getwd()
 	requestsDir := filepath.Join(pwd, "requests_dir")
-    groups, err := requests.LoadAllRequests(requestsDir)
-    if err != nil {
-        log.Panic(err)
-    }
+	groups, err := requests.LoadAllRequests(requestsDir)
+	if err != nil {
+		log.Panic(err)
+	}
+
 	// Create a new Flex layout to contain groups
 	requestSelector := tview.NewList()
-    requestSelector.SetBorder(true).SetTitle("Requests")
+	requestSelector.SetBorder(true).SetTitle("Requests")
 
-    requestViewer := tview.NewTextView().
-		SetWrap(false).
+	// Create the viewer to display the request info
+	requestViewer := tview.NewTextView().
+		SetWrap(true).
 		SetDynamicColors(true)
 	requestViewer.SetBorderPadding(1, 1, 2, 0)
-    requestViewer.SetBorder(true).SetTitle("Request Viewer")
+	requestViewer.SetBorder(true).SetTitle("Request Viewer")
 
-	// Loop over each group and add requests to a collapsible section
-	for groupName, requests := range groups {
-		// group := tview.NewFlex().SetDirection(tview.FlexRow)
+	// The selected request's data
+	var selectedRequest *requests.Request
 
-		// Create a simple header with the group name
-		// groupHeader := tview.NewTextView().SetText(groupName)
+	// TODO: Unify custom input logic
+	requestSelector.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Rune() {
+		case 'k':
+			curr_idx := requestSelector.GetCurrentItem()
+			requestSelector.SetCurrentItem(curr_idx - 1)
+			return nil
+		case 'j':
+			curr_idx := requestSelector.GetCurrentItem()
+			requestSelector.SetCurrentItem(curr_idx + 1)
+			return nil
+		case rune(tcell.KeyCtrlR):
+			// Execute the selected request
+			if selectedRequest != nil {
+				response, err := selectedRequest.Execute()
+				if err != nil {
+					log.Println("Error executing request:", err)
+				} else {
+					// TODO: Move this to a dedicated window, maybe?
+					requestViewer.Clear()
+					fmt.Fprint(requestViewer, selectedRequest.ParseResponse(response))
+				}
+			}
+			return nil
+		}
+		return event
+	})
 
-		// Create a list to hold requests in this group
-		// list := tview.NewList()
-		for _, request := range requests.Requests {
-			// Add request to list (no subtext or callback for now)
-			requestSelector.AddItem(request.Name, groupName, 0, func() {
-                requestViewer.Clear()
-                fmt.Fprint(requestViewer, request.ViewerFormat())
-            })
+	for groupName, groupRequests := range groups {
+		for _, req := range groupRequests.Requests {
+			// Associate each request with a closure that sets selectedRequest and displays it
+			// NOTE: Want to take a moment, this next line has a function(arg) that returns function() - Nice
+			// Should learn more about closures
+			requestSelector.AddItem(req.Name, groupName, 0, func(req requests.Request) func() {
+				return func() {
+					selectedRequest = &req
+					requestViewer.Clear()
+					// Format and display the request details in the viewer
+					fmt.Fprint(requestViewer, req.ViewerFormat()) // Format request as per ViewerFormat method
+				}
+			}(req))
+		}
+	}
 
-
-		// Add the header and list to the group
-		// group.AddItem(groupHeader, 0, 1, false) // Add group header
-		// group.AddItem(list, 0, 5, false)       // Add request list to group
-
-		// Add the group to the main request view
-		// requestView.AddItem(group, 0, 1, false)
-	}}
-
-    return tview.NewFlex().
+	return tview.NewFlex().
 		AddItem(tview.NewFlex().
 			SetDirection(tview.FlexColumn).
 			AddItem(requestSelector, 0, 1, true), 0, 1, true).
-		AddItem(requestViewer, 0, 1, false)
+		AddItem(requestViewer, 0, 2, false)
 }

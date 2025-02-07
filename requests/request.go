@@ -134,19 +134,22 @@ func (r *Request) ViewerFormat() string {
 }
 
 // ParseResponse reads and prints the response body
-func (r *Request) ParseResponse(resp *ResponseWithTime) {
+func (r *Request) ParseResponse(resp *ResponseWithTime) string {
+    var builder strings.Builder
 	// Ensure the response body is closed after reading
 	defer resp.Body.Close()
 
 	// Read the response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return
+        fmt.Fprintf(&builder, "ERROR READING RESPONSE BODY: %s\n", err)
+		return builder.String()
 	}
 
 	// Print response details
-	fmt.Println("Response Status:", resp.Status)
-	fmt.Println("Response Time:", resp.ResponseTime)
-	fmt.Println("Response Body:", string(body))
+
+	fmt.Fprintf(&builder, "RESPONSE STATUS: %s\n", resp.Status)
+	fmt.Fprintf(&builder, "RESPONSE TIME: %s\n", resp.ResponseTime)
+	fmt.Fprintf(&builder, "RESPONSE BODY: %s\n", string(body))
+    return builder.String()
 }

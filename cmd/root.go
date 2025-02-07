@@ -13,7 +13,7 @@ var rootCmd = &cobra.Command{
     Short: "A simple HTTP client with TUI",
     Run: func(cmd *cobra.Command, args []string) {
         // Initialize and run the TUI
-        gui.RunTUI()
+        gui.RunGUI()
     },
 }
 
