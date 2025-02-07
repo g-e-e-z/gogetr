@@ -1,6 +1,7 @@
 {
   "requests": [
     {
+      "name": "Json GET",
       "method": "GET",
       "url": "https://jsonplaceholder.typicode.com/posts",
       "headers": {
@@ -13,6 +14,7 @@
       "body": null
     },
     {
+      "name": "Json POST",
       "method": "POST",
       "url": "https://jsonplaceholder.typicode.com/posts",
       "headers": {

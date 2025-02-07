@@ -1,6 +1,7 @@
 {
   "requests": [
     {
+      "name": "Postman Get",
       "method": "GET",
       "url": "https://postman-echo.com/get",
       "headers": {
@@ -14,6 +15,7 @@
       "body": null
     },
     {
+      "name": "Postman Post",
       "method": "POST",
       "url": "https://postman-echo.com/post",
       "headers": {

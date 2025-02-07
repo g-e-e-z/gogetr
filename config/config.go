@@ -38,15 +38,15 @@ func findOrCreateConfigDir(folder string) (string, error) {
 }
 
 func NewAppConfig() (*AppConfig, error) {
-	configDir, err := findOrCreateConfigDir(configDir)
-	if err != nil {
-		return nil, err
-	}
+	// configDir, err := findOrCreateConfigDir(configDir)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	appConfig := &AppConfig{
 		Name:        "gogetr",
 		Debug:       true,
-		ConfigDir:   configDir,
+		ConfigDir:   "",
 		RequestsDir: "",
 	}
 	return appConfig, nil
