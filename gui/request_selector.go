@@ -23,14 +23,14 @@ func NewRequestSelector() *tview.Flex {
 
 	// Create a new Flex layout to contain groups
 	requestSelector := tview.NewList()
-	requestSelector.SetBorder(true).SetTitle("Requests")
+	requestSelector.SetBorder(true).SetTitle("Collection")
 
 	// Create the viewer to display the request info
 	requestViewer := tview.NewTextView().
 		SetWrap(true).
 		SetDynamicColors(true)
 	requestViewer.SetBorderPadding(1, 1, 2, 0)
-	requestViewer.SetBorder(true).SetTitle("Request Viewer")
+	requestViewer.SetBorder(true).SetTitle("Response")
 
 	// The selected request's data
 	var selectedRequest *requests.Request
@@ -44,7 +44,11 @@ func NewRequestSelector() *tview.Flex {
 			return nil
 		case 'j':
 			curr_idx := requestSelector.GetCurrentItem()
-			requestSelector.SetCurrentItem(curr_idx + 1)
+			if curr_idx + 1 == requestSelector.GetItemCount() {
+				requestSelector.SetCurrentItem(0)
+			} else {
+				requestSelector.SetCurrentItem(curr_idx + 1)
+			}
 			return nil
 		case rune(tcell.KeyCtrlR):
 			// Execute the selected request
